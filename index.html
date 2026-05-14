@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Gold Margin">
+<title>Gold Margin</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{
+  background:#0e0c08;
+  color:#e8d9b0;
+  font-family:-apple-system,BlinkMacSystemFont,sans-serif;
+  min-height:100vh;
+  padding-top:env(safe-area-inset-top,24px);
+  padding-bottom:env(safe-area-inset-bottom,40px);
+  padding-left:16px;
+  padding-right:16px;
+  -webkit-text-size-adjust:100%;
+}
+#app{max-width:480px;margin:0 auto}
+.hdr{text-align:center;margin-bottom:20px;padding-top:10px}
+.hdr h1{color:#C8A84B;font-size:1.7rem;font-weight:700;letter-spacing:.12em;margin-bottom:4px}
+.hdr p{color:#6a5a3a;font-size:.68rem;letter-spacing:.18em;text-transform:uppercase}
+.card{background:rgba(255,255,255,.03);border:1px solid rgba(200,168,75,.2);border-radius:18px;padding:16px;margin-bottom:14px}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.mb14{margin-bottom:14px}
+.mb12{margin-bottom:12px}
+label{display:block;margin-bottom:6px;color:#a48a57;font-size:.63rem;text-transform:uppercase;letter-spacing:.1em}
+.fn{font-size:.58rem;color:#5a4a28;margin-top:3px;line-height:1.4}
+.iw{position:relative}
+.px{position:absolute;left:11px;top:50%;transform:translateY(-50%);color:#7a6a4a;font-size:.88rem;pointer-events:none}
+.sx{position:absolute;right:11px;top:50%;transform:translateY(-50%);color:#5a4a30;font-size:.75rem;pointer-events:none}
+input[type=number]{
+  display:block;width:100%;
+  background:#ffffff;
+  border:2px solid rgba(200,168,75,.35);
+  color:#000000;
+  border-radius:10px;
+  padding:13px 11px;
+  font-size:1.05rem;font-weight:500;
+  font-family:-apple-system,BlinkMacSystemFont,sans-serif;
+  -webkit-appearance:none;outline:none;
+}
+input[type=number].pl{padding-left:24px}
+input[type=number].pr{padding-right:26px}
+input[type=number]:focus{border-color:#C8A84B}
+input[type=number]::-webkit-inner-spin-button,
+input[type=number]::-webkit-outer-spin-button{-webkit-appearance:none}
+/* SLIDER */
+input[type=range]{
+  display:block;width:100%;
+  -webkit-appearance:none;appearance:none;
+  height:6px;border-radius:6px;
+  background:rgba(200,168,75,.2);
+  border:none;padding:0;outline:none;
+  cursor:pointer;margin:10px 0 6px;
+}
+input[type=range]::-webkit-slider-thumb{
+  -webkit-appearance:none;
+  width:28px;height:28px;
+  border-radius:50%;
+  background:#C8A84B;
+  border:3px solid #fff;
+  box-shadow:0 2px 6px rgba(0,0,0,.5);
+  cursor:pointer;
+}
+.purity-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:4px}
+.purity-big{font-size:1.6rem;font-weight:700;color:#C8A84B}
+.purity-rate{font-size:.78rem;color:#7a6a4a;text-align:right;line-height:1.4}
+.purity-ticks{display:flex;justify-content:space-between;margin-top:2px}
+.purity-ticks span{font-size:.55rem;color:#5a4a28}
+/* CALCULATE BUTTON */
+.calcbtn{
+  display:block;width:100%;
+  margin-top:16px;padding:16px;
+  background:#C8A84B;color:#000;
+  font-size:1.05rem;font-weight:700;
+  font-family:-apple-system,BlinkMacSystemFont,sans-serif;
+  border:none;border-radius:12px;
+  cursor:pointer;letter-spacing:.06em;
+  -webkit-tap-highlight-color:transparent;
+}
+.calcbtn:active{opacity:.8}
+/* RESULTS */
+.divr{display:flex;align-items:center;gap:8px;margin:14px 0 9px}
+.dl{height:1px;flex:1;background:rgba(200,168,75,.15)}
+.dt{font-size:.56rem;letter-spacing:.14em;text-transform:uppercase;color:#6a5a3a;white-space:nowrap}
+.rr{display:flex;justify-content:space-between;align-items:flex-start;padding:7px 0;border-bottom:1px solid rgba(200,168,75,.08);gap:8px}
+.rl{flex:1;font-size:.78rem;color:#b09a6e;line-height:1.3}
+.rl.d{color:#7a6a4a;font-style:italic}
+.rn{font-size:.58rem;color:#5a4a28;margin-top:2px}
+.rv{font-size:.86rem;font-weight:600;color:#f4e8c6;white-space:nowrap;flex-shrink:0}
+.bbox{padding:12px 13px;background:rgba(200,168,75,.08);border:1px solid rgba(200,168,75,.3);border-radius:12px;margin-top:10px}
+.bxtop{display:flex;justify-content:space-between;align-items:center}
+.bxl{font-size:.63rem;color:#a48a57;text-transform:uppercase;letter-spacing:.08em}
+.bxa{font-size:1.35rem;font-weight:700;color:#C8A84B}
+.bxbot{display:flex;justify-content:space-between;margin-top:3px}
+.bxs{font-size:.6rem;color:#5a4a28}
+.gtbox{padding:13px 14px;background:rgba(200,168,75,.13);border:1px solid rgba(200,168,75,.5);border-radius:12px;margin-top:10px}
+.gtbox .bxtop{display:flex;justify-content:space-between;align-items:center}
+.gtbox .bxl{font-size:.63rem;color:#a48a57;text-transform:uppercase;letter-spacing:.08em}
+.gtbox .bxa{font-size:1.5rem;font-weight:700;color:#C8A84B}
+.gtbox .bxbot{display:flex;justify-content:space-between;margin-top:3px}
+.gtbox .bxs{font-size:.6rem;color:#7a6a4a}
+.pbox{border-radius:12px;padding:13px;margin-top:10px}
+.pbox.win{background:rgba(50,160,80,.09);border:1px solid rgba(50,160,80,.3)}
+.pbox.los{background:rgba(200,60,60,.09);border:1px solid rgba(200,60,60,.3)}
+.ph{display:flex;justify-content:space-between;align-items:center;margin-bottom:5px}
+.ptl{font-size:.63rem;text-transform:uppercase;letter-spacing:.08em;color:#a48a57}
+.pam{font-size:1.35rem;font-weight:700}
+.pam.win{color:#4eba6a}.pam.los{color:#d95050}
+.pmt{display:flex;justify-content:space-between;padding-bottom:8px;border-bottom:1px solid rgba(200,168,75,.12);margin-bottom:8px}
+.ppg{font-size:.63rem;color:#6a5a3a}
+.ppt{font-size:.68rem;font-weight:600}
+.ppt.win{color:#4eba6a}.ppt.los{color:#d95050}
+.pg3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px}
+.pc{background:rgba(200,168,75,.06);border-radius:7px;padding:8px 4px;text-align:center}
+.pcl{font-size:.52rem;color:#7a6a4a;text-transform:uppercase;letter-spacing:.04em;margin-bottom:3px}
+.pcv{font-size:.86rem;font-weight:600;color:#e8d9b0}
+.pcv.g{color:#4eba6a}
+.pcs{font-size:.52rem;color:#5a4a28;margin-top:2px}
+.fml{font-size:.59rem;color:#4a3a20;font-style:italic;text-align:center;margin-top:8px;line-height:1.5}
+.empty{text-align:center;color:#4a3a20;font-size:.8rem;padding:10px 0}
+.footer{text-align:center;margin-top:14px;color:#2e2810;font-size:.57rem;letter-spacing:.08em;text-transform:uppercase;padding-bottom:10px}
+</style>
+</head>
+<body>
+<div id="app">
+
+  <div class="hdr">
+    <h1>&#9670; Gold Margin &#9670;</h1>
+    <p>Cost &middot; Karigar &middot; Retail Profit</p>
+  </div>
+
+  <div class="card">
+
+    <!-- Rate + Weight -->
+    <div class="g2 mb14">
+      <div>
+        <label>24K Gold Rate / g</label>
+        <div class="iw">
+          <span class="px">&#8377;</span>
+          <input type="number" id="iRate" class="pl" inputmode="decimal">
+        </div>
+        <div class="fn">Fine gold base rate</div>
+      </div>
+      <div>
+        <label>Weight (g)</label>
+        <div class="iw">
+          <input type="number" id="iWeight" class="pr" inputmode="decimal">
+          <span class="sx">g</span>
+        </div>
+        <div class="fn">Total jewelry grams</div>
+      </div>
+    </div>
+
+    <!-- Purity Slider -->
+    <div class="mb14">
+      <label>Gold Purity</label>
+      <div class="purity-row">
+        <span class="purity-big" id="purityPct">92%</span>
+        <span class="purity-rate" id="purityRate">Auto rate: &#8377; —</span>
+      </div>
+      <input type="range" id="iSlider" min="1" max="100" value="92">
+      <div class="purity-ticks">
+        <span>1%</span><span>25%</span><span>50%</span><span>75%</span><span>100%</span>
+      </div>
+      <div style="margin-top:10px">
+        <label>Or type exact purity %</label>
+        <div class="iw">
+          <input type="number" id="iPurity" class="pr" inputmode="decimal" step="0.1">
+          <span class="sx">%</span>
+        </div>
+        <div class="fn">Type any value e.g. 93 — slider updates automatically</div>
+      </div>
+    </div>
+
+    <!-- Karigar + Making -->
+    <div class="g2 mb12">
+      <div>
+        <label>Karigar Expense</label>
+        <div class="iw">
+          <input type="number" id="iKarigar" class="pr" inputmode="decimal">
+          <span class="sx">%</span>
+        </div>
+        <div class="fn">% on 24K rate &#215; weight</div>
+      </div>
+      <div>
+        <label>Making Charge</label>
+        <div class="iw">
+          <input type="number" id="iMaking" class="pr" inputmode="decimal">
+          <span class="sx">%</span>
+        </div>
+        <div class="fn" id="mNote">% on carat rate</div>
+      </div>
+    </div>
+
+    <!-- Custom Carat Rate -->
+    <div class="mb12">
+      <label>Custom Carat Rate / g <span style="color:#5a4a28;font-size:.56rem;text-transform:none;letter-spacing:0">(optional — overrides auto)</span></label>
+      <div class="iw">
+        <span class="px">&#8377;</span>
+        <input type="number" id="iCustomRate" class="pl" inputmode="decimal">
+      </div>
+      <div class="fn" id="customNote">Leave blank — auto = 24K rate &#215; purity %</div>
+    </div>
+
+    <!-- Other Charges + GST -->
+    <div class="g2 mb12">
+      <div>
+        <label>Other Charges</label>
+        <div class="iw">
+          <span class="px">&#8377;</span>
+          <input type="number" id="iOther" class="pl" inputmode="decimal">
+        </div>
+        <div class="fn">Any fixed amount</div>
+      </div>
+      <div>
+        <label>GST %</label>
+        <div class="iw">
+          <input type="number" id="iGst" class="pr" inputmode="decimal">
+          <span class="sx">%</span>
+        </div>
+        <div class="fn">On total selling price</div>
+      </div>
+    </div>
+
+    <button class="calcbtn" id="calcBtn">&#9670; Calculate</button>
+  </div>
+
+  <div class="card" id="result">
+    <div class="empty">Fill in the fields above and tap Calculate</div>
+  </div>
+
+  <div class="footer">100% offline &#183; Based on 24K fine gold rate</div>
+</div>
+
+<script>
+function inr(n){
+  var v = Math.round(n * 100) / 100;
+  return v.toLocaleString("en-IN", {minimumFractionDigits:2, maximumFractionDigits:2});
+}
+function grm(n){
+  var v = Math.round(n * 1000) / 1000;
+  return v.toLocaleString("en-IN", {minimumFractionDigits:3, maximumFractionDigits:3});
+}
+function gv(id){
+  var n = parseFloat(document.getElementById(id).value);
+  return isNaN(n) ? 0 : n;
+}
+
+// ── PURITY SLIDER SYNC ──
+var slider  = document.getElementById("iSlider");
+var iPurity = document.getElementById("iPurity");
+var purityPct  = document.getElementById("purityPct");
+var purityRate = document.getElementById("purityRate");
+
+function updatePurityDisplay(){
+  var p = getPurity();
+  var pct = (p * 100);
+  purityPct.textContent = pct % 1 === 0 ? pct.toFixed(0) + "%" : pct.toFixed(1) + "%";
+  var R = gv("iRate");
+  if(R > 0){
+    purityRate.textContent = "Auto rate: \u20B9" + inr(R * p) + " / g";
+  } else {
+    purityRate.textContent = "Auto rate: \u20B9 \u2014";
+  }
+}
+
+function getPurity(){
+  // typed field takes priority if filled
+  var typed = parseFloat(iPurity.value);
+  if(!isNaN(typed) && typed > 0 && typed <= 100) return typed / 100;
+  return parseFloat(slider.value) / 100;
+}
+
+// slider moves → update typed field display
+slider.oninput = function(){
+  iPurity.value = slider.value;
+  updatePurityDisplay();
+};
+slider.onchange = slider.oninput;
+
+// typed field moves → update slider
+iPurity.oninput = function(){
+  var v = parseFloat(iPurity.value);
+  if(!isNaN(v) && v >= 1 && v <= 100){
+    slider.value = Math.round(v);
+  }
+  updatePurityDisplay();
+};
+iPurity.onblur   = iPurity.oninput;
+iPurity.onchange = iPurity.oninput;
+
+// ── WIRE OTHER INPUTS ──
+var flds = ["iRate","iWeight","iKarigar","iMaking","iCustomRate","iOther","iGst"];
+for(var k = 0; k < flds.length; k++){
+  (function(id){
+    var el = document.getElementById(id);
+    el.onkeyup  = updatePurityDisplay;
+    el.onblur   = updatePurityDisplay;
+    el.oninput  = updatePurityDisplay;
+    el.onchange = updatePurityDisplay;
+  })(flds[k]);
+}
+
+// calculate button
+document.getElementById("calcBtn").onclick = go;
+
+// ── HTML HELPERS ──
+function dv(t){
+  return '<div class="divr"><div class="dl"></div><span class="dt">' + t + '</span><div class="dl"></div></div>';
+}
+function rw(l, v, n, d){
+  return '<div class="rr"><div><div class="rl' + (d ? ' d' : '') + '">' + l + '</div>' + (n ? '<div class="rn">' + n + '</div>' : '') + '</div><div class="rv">' + v + '</div></div>';
+}
+function bx(l, a, pg, e){
+  return '<div class="bbox"><div class="bxtop"><span class="bxl">' + l + '</span><span class="bxa">&#8377; ' + inr(a) + '</span></div><div class="bxbot"><span class="bxs">' + e + '</span><span class="bxs">&#8377; ' + inr(pg) + ' / g</span></div></div>';
+}
+function gt(l, a, pg, e){
+  return '<div class="gtbox"><div class="bxtop"><span class="bxl">' + l + '</span><span class="bxa">&#8377; ' + inr(a) + '</span></div><div class="bxbot"><span class="bxs">' + e + '</span><span class="bxs">&#8377; ' + inr(pg) + ' / g</span></div></div>';
+}
+
+// ── MAIN CALCULATE ──
+function go(){
+  var R  = gv("iRate");
+  var W  = gv("iWeight");
+  var KP = gv("iKarigar");
+  var MP = gv("iMaking");
+  var CR = gv("iCustomRate");
+  var OC = gv("iOther");
+  var GS = gv("iGst");
+  var p  = getPurity();
+  var pctLabel = (p * 100) % 1 === 0 ? (p * 100).toFixed(0) : (p * 100).toFixed(1);
+  var out = document.getElementById("result");
+
+  // update notes
+  var ar = R > 0 ? R * p : 0;
+  document.getElementById("mNote").textContent = "% on " + pctLabel + "% rate (\u20B9" + (ar > 0 ? inr(CR > 0 ? CR : ar) : "\u2014") + "/g)";
+  document.getElementById("customNote").textContent = CR > 0
+    ? "Using \u20B9" + inr(CR) + "/g  (auto = \u20B9" + inr(ar) + "/g)"
+    : "Leave blank \u2014 auto = \u20B9" + inr(ar) + "/g";
+  updatePurityDisplay();
+
+  if(R <= 0 || W <= 0){
+    out.innerHTML = '<div class="empty">Fill in the fields above and tap Calculate</div>';
+    return;
+  }
+
+  // POLISH GHAT — sell weight only
+  var pg  = W < 10 ? 0.100 : Math.round(W * 0.01 * 1000) / 1000;
+  var WC  = Math.round((W + pg) * 1000) / 1000;
+
+  // COST on actual weight W
+  var fgG = Math.round(W * p * 1000) / 1000;
+  var gC  = fgG * R;
+  var kG  = Math.round(W * (KP / 100) * 1000) / 1000;
+  var kC  = kG * R;
+  var tcP = p + KP / 100;
+  var efG = Math.round(W * tcP * 1000) / 1000;
+  var TC  = gC + kC;
+  var CPG = TC / W;
+
+  // SELL on WC
+  var cR  = CR > 0 ? CR : R * p;
+  var mPG = cR * (MP / 100);
+  var sB  = WC * (cR + mPG);
+  var sOC = sB + OC;
+  var gA  = sOC * (GS / 100);
+  var TS  = sOC + gA;
+  var TPG = TS / WC;
+
+  // PROFIT
+  var PR  = TS - TC;
+  var PRG = PR / W;
+  var PRP = (PR / TC) * 100;
+  var pos = PR >= 0;
+  var pc  = pos ? "win" : "los";
+
+  var h = "";
+
+  // PURITY USED
+  h += dv("Purity");
+  h += rw("Gold Purity Set", pctLabel + "%", "Auto carat rate: \u20B9" + inr(R * p) + " / g", false);
+  if(CR > 0) h += rw("Custom Carat Rate Override", "\u20B9 " + inr(CR) + " / g", "Overrides auto rate of \u20B9" + inr(R * p) + "/g", true);
+
+  // POLISH GHAT
+  h += dv("Polish Ghat");
+  h += rw("Actual Weight", grm(W) + "g", "", true);
+  h += rw(
+    W < 10 ? "Polish Ghat (below 10g \u2014 fixed)" : "Polish Ghat (above 10g \u2014 1%)",
+    "+" + grm(pg) + "g",
+    W < 10 ? "Fixed 0.100g added" : grm(W) + "g \u00D7 1% = " + grm(pg) + "g",
+    true
+  );
+  h += rw("Selling Weight", "<b style='color:#C8A84B'>" + grm(WC) + "g</b>", "Used for selling only \u2014 cost on actual weight", false);
+
+  // COST
+  h += dv("Your Cost \u2014 Purchase Side (" + grm(W) + "g)");
+  h += rw("Fine Gold @ " + pctLabel + "%", grm(fgG) + "g", grm(W) + "g \u00D7 " + pctLabel + "% = " + grm(fgG) + "g", true);
+  h += rw("Gold Cost", "\u20B9 " + inr(gC), grm(fgG) + "g \u00D7 \u20B9" + inr(R) + " = \u20B9" + inr(gC), false);
+  if(KP > 0){
+    h += rw("Karigar @ " + KP + "%", "\u20B9 " + inr(kC), grm(kG) + "g \u00D7 \u20B9" + inr(R) + " = \u20B9" + inr(kC), true);
+    h += rw("Effective % (" + pctLabel + "% + " + KP + "%)", (tcP * 100).toFixed(1) + "%", "Eff. weight: " + grm(W) + "g \u00D7 " + (tcP * 100).toFixed(1) + "% = " + grm(efG) + "g", false);
+  }
+  h += bx("Your Total Cost", TC, CPG, grm(W) + "g \u00D7 \u20B9" + inr(R) + " \u00D7 " + (tcP * 100).toFixed(1) + "%");
+
+  // SELL
+  h += dv("Retail Selling \u2014 " + pctLabel + "% Rate + Making (" + grm(WC) + "g)");
+  h += rw("Carat Rate " + (CR > 0 ? "(Custom)" : "(24K \u00D7 " + pctLabel + "%)"),
+    "\u20B9 " + inr(cR) + " / g",
+    CR > 0 ? "Custom \u20B9" + inr(cR) + "/g  (auto = \u20B9" + inr(R * p) + "/g)" : "\u20B9" + inr(R) + " \u00D7 " + pctLabel + "% = \u20B9" + inr(cR) + "/g",
+    false);
+  if(MP > 0){
+    h += rw("Making @ " + MP + "% on \u20B9" + inr(cR), "\u20B9 " + inr(mPG) + " / g", "\u20B9" + inr(cR) + " \u00D7 " + MP + "% = \u20B9" + inr(mPG) + "/g", true);
+  }
+  h += bx("Selling Price (before extras)", sB, sB / WC, grm(WC) + "g \u00D7 \u20B9" + inr(cR + mPG));
+
+  if(OC > 0 || GS > 0){
+    h += dv("Extra Charges");
+    if(OC > 0) h += rw("Other Charges", "\u20B9 " + inr(OC), "Fixed amount added", true);
+    if(GS > 0) h += rw("GST @ " + GS + "%", "\u20B9 " + inr(gA), "On \u20B9" + inr(sOC), true);
+    h += gt("Grand Total (Customer Pays)", TS, TPG, "\u20B9" + inr(sB) + (OC > 0 ? " + \u20B9" + inr(OC) : "") + (GS > 0 ? " + GST " + GS + "%" : ""));
+  } else {
+    h += gt("Grand Total (Customer Pays)", TS, TPG, grm(WC) + "g \u00D7 \u20B9" + inr(cR + mPG));
+  }
+
+  // PROFIT
+  h += dv("Profit");
+  h += rw("Customer Pays", "\u20B9 " + inr(TS), "\u20B9" + inr(TPG) + "/g \u00D7 " + grm(WC) + "g (sell wt)", false);
+  h += rw("Your Cost", "\u20B9 " + inr(TC), "\u20B9" + inr(CPG) + "/g \u00D7 " + grm(W) + "g (actual wt)", false);
+  h += '<div class="pbox ' + pc + '">'
+     + '<div class="ph"><span class="ptl">' + (pos ? "Net Profit" : "Net Loss") + '</span><span class="pam ' + pc + '">\u20B9 ' + inr(Math.abs(PR)) + '</span></div>'
+     + '<div class="pmt"><span class="ppg">\u20B9 ' + inr(Math.abs(PRG)) + ' / gram</span><span class="ppt ' + pc + '">' + (PRP >= 0 ? "+" : "") + PRP.toFixed(2) + '% on cost</span></div>'
+     + '<div class="pg3">'
+     + '<div class="pc"><div class="pcl">Sell/gram</div><div class="pcv">\u20B9 ' + inr(TPG) + '</div><div class="pcs">incl.GST</div></div>'
+     + '<div class="pc"><div class="pcl">Cost/gram</div><div class="pcv">\u20B9 ' + inr(CPG) + '</div><div class="pcs">gold+karigar</div></div>'
+     + '<div class="pc"><div class="pcl">Profit/gram</div><div class="pcv g">\u20B9 ' + inr(PRG) + '</div><div class="pcs">net/gram</div></div>'
+     + '</div>'
+     + '<div class="fml">\u20B9' + inr(TS) + ' \u2212 \u20B9' + inr(TC) + ' = \u20B9' + inr(PR) + (pos ? " profit" : " loss") + '</div>'
+     + '</div>';
+
+  out.innerHTML = h;
+}
+
+// init display
+updatePurityDisplay();
+</script>
+</body>
+</html>
