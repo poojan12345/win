@@ -1,0 +1,4 @@
+swarm_coordinator:
+  ros__parameters:
+    robot_count: 10
+    heartbeat_timeout_s: 5.0
