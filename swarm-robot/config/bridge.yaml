@@ -1,0 +1,13 @@
+# ROS 2 <-> Gazebo Harmonic bridge configuration.
+# Topic names are intentionally relative to each spawned robot namespace.
+- ros_topic_name: /clock
+  gz_topic_name: /clock
+  ros_type_name: rosgraph_msgs/msg/Clock
+  gz_type_name: gz.msgs.Clock
+  direction: GZ_TO_ROS
+
+# Per-robot topics are bridged by the launch system after namespace expansion.
+# The template below documents the required mapping:
+# /swarm/robot_N/cmd_vel <-> /model/robot_N/cmd_vel
+# /swarm/robot_N/odom    <-> /model/robot_N/odometry
+# /swarm/robot_N/scan    <-> /model/robot_N/scan
