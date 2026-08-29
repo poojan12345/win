@@ -1,46 +1,46 @@
 #!/usr/bin/env python3
-"""Launch the Phase 1 multi-robot Nav2 stack.
+"""Launch ten namespaced Nav2 instances for the Phase 1 swarm."""
 
-This launch file intentionally keeps every robot inside its own ROS namespace.
-It is designed for ROS 2 Jazzy + Gazebo Harmonic and assumes the simulation
-world and robot models have already been started.
-"""
+from pathlib import Path
 
 from launch import LaunchDescription
-from launch.actions import DeclareLaunchArgument, GroupAction
-from launch.conditions import IfCondition
+from launch.actions import DeclareLaunchArgument, IncludeLaunchDescription
+from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch.substitutions import LaunchConfiguration
-from launch_ros.actions import Node, PushRosNamespace
-from launch_ros.descriptions import ComposableNode
-from launch_ros.actions import ComposableNodeContainer
+from launch_ros.substitutions import FindPackageShare
 
 ROBOT_COUNT = 10
-
-
-def robot_group(name: str):
-    return GroupAction([
-        PushRosNamespace(name),
-        Node(
-            package='nav2_bringup',
-            executable='bringup_launch.py',
-            name='nav2_bringup',
-            output='screen',
-            parameters=[
-                LaunchConfiguration('params_file'),
-                {'use_sim_time': True},
-            ],
-            arguments=['namespace:=', name, 'use_namespace:=True', 'autostart:=True'],
-        ),
-    ])
+ROOT = Path(__file__).resolve().parents[1]
+DEFAULT_PARAMS = str(ROOT / 'config' / 'nav2_params.yaml')
 
 
 def generate_launch_description():
-    params_file = DeclareLaunchArgument(
+    params_arg = DeclareLaunchArgument(
         'params_file',
-        default_value='swarm-robot/config/nav2_params.yaml',
-        description='Shared namespaced Nav2 parameter file',
+        default_value=DEFAULT_PARAMS,
+        description='Shared Nav2 parameter file',
     )
 
-    groups = [robot_group(f'swarm/robot_{i:02d}') for i in range(1, ROBOT_COUNT + 1)]
+    nav2_launch = FindPackageShare('nav2_bringup')
+    includes = []
 
-    return LaunchDescription([params_file, *groups])
+    for i in range(1, ROBOT_COUNT + 1):
+        namespace = f'swarm/robot_{i:02d}'
+        includes.append(
+            IncludeLaunchDescription(
+                PythonLaunchDescriptionSource([
+                    nav2_launch,
+                    '/launch/bringup_launch.py',
+                ]),
+                launch_arguments={
+                    'namespace': namespace,
+                    'use_namespace': 'True',
+                    'params_file': LaunchConfiguration('params_file'),
+                    'use_sim_time': 'True',
+                    'autostart': 'True',
+                    'use_rviz': 'False',
+                }.items(),
+            )
+        )
+
+    return LaunchDescription([params_arg, *includes])
