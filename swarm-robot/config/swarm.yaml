@@ -1,0 +1,18 @@
+# Phase 1 swarm configuration
+swarm:
+  robot_count: 10
+  namespace_prefix: /swarm/robot_
+  minimum_inter_robot_distance_m: 0.75
+  task_timeout_s: 30
+  dropout_reassignment: true
+  mission_timeout_s: 600
+
+robots:
+  model: research_ground_robot
+  drive: differential
+  navigation: nav2
+  simulation: gazebo_harmonic
+
+mission:
+  task_type: exploration_waypoint
+  autonomous: true
